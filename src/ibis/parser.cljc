@@ -9,7 +9,7 @@
   Not a conformant IBIS grammar parser: submodels, series models,
   [Voltage Range]/temperature corners, and continuation lines are out of
   scope."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [ibis.component :as component]
             [ibis.model :as model]))
 
@@ -29,7 +29,7 @@
   `[section-keyword trailing]`, else nil."
   [line]
   (when-let [[_ name trailing] (re-matches #"\[([^\]]+)\]\s*(.*)" line)]
-    [(-> name str/trim str/lower-case (str/replace #"\s+" "-") keyword)
+    [(-> name str/trim str/lower (str/replace #"\s+" "-") keyword)
      (str/trim trailing)]))
 
 (defn- kv-line
@@ -37,7 +37,7 @@
   else nil."
   [line]
   (when-let [[_ k v] (re-matches #"([^=]+?)\s*=\s*(.+)" (str/trim line))]
-    [(str/lower-case (str/trim k)) (str/trim v)]))
+    [(str/lower (str/trim k)) (str/trim v)]))
 
 (defn- table-row
   "If `line` is two whitespace-separated numbers, return `[voltage
@@ -90,7 +90,7 @@
     :model (-> state (assoc :section :top :model-name trailing)
                (assoc-in [:models trailing] (model/model {:name trailing})))
     :model-type (assoc-in state [:models (:model-name state) :model-type]
-                           (get model-type-aliases (str/lower-case trailing)))
+                           (get model-type-aliases (str/lower trailing)))
     (:package :pin :pulldown :pullup :power-clamp :gnd-clamp :ramp)
     (assoc state :section sec)
     state))
