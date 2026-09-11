@@ -31,5 +31,5 @@ mapping, series models, submodels, multi-lingual IBIS extensions. 11 tests
 ## Develop
 
 ```bash
-clojure -M:test
+kbb -M:test
 ```
